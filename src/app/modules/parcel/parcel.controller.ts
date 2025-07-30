@@ -1,0 +1,52 @@
+import { Request, Response } from "express";
+import { ParcelService } from "./parcel.service";
+import { catchAsync } from "../../ultis/catchAsync";
+import { sendResponse } from "../../ultis/sendResponse";
+
+
+const createParcel = catchAsync(async (req: Request, res: Response) => {
+  const result = await ParcelService.createParcel(req.body);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Parcel created successfully",
+    data: result,
+  });
+});
+
+const getAllParcels = catchAsync(async (_req: Request, res: Response) => {
+  const result = await ParcelService.getAllParcels();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcels retrieved successfully",
+    data: result,
+  });
+});
+
+const getSingleParcel = catchAsync(async (req: Request, res: Response) => {
+  const result = await ParcelService.getSingleParcel(req.params.id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel retrieved",
+    data: result,
+  });
+});
+
+const deleteParcel = catchAsync(async (req: Request, res: Response) => {
+  const result = await ParcelService.deleteParcel(req.params.id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel deleted",
+    data: result,
+  });
+});
+
+export const ParcelController = {
+  createParcel,
+  getAllParcels,
+  getSingleParcel,
+  deleteParcel,
+};
