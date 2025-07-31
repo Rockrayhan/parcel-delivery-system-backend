@@ -1,15 +1,26 @@
-import { z } from "zod";
+import { z } from 'zod';
+import { ParcelStatus } from './parcel.interface';
 
 export const createParcelZodSchema = z.object({
-  body: z.object({
-    type: z.string(),
-    weight: z.number(),
-    sender: z.string(),
-    receiver: z.string(),
-    pickupAddress: z.string(),
-    deliveryAddress: z.string(),
-    fee: z.number(),
-    deliveryDate: z.string().datetime(), // ISO format date
-    trackingId: z.string(),
-  }),
+  trackingId: z.string(),
+  type: z.string(),
+  weight: z.number().positive(),
+  sender: z.string(), // validate ObjectId elsewhere if needed
+  receiver: z.string(),
+  pickupAddress: z.string(),
+  deliveryAddress: z.string(),
+  fee: z.number().min(0),
+  deliveryDate: z.coerce.date(),
+  currentStatus: z.nativeEnum(ParcelStatus),
+  statusLogs: z.array(
+    z.object({
+      status: z.nativeEnum(ParcelStatus),
+      timestamp: z.coerce.date(),
+      updatedBy: z.string(),
+      note: z.string().optional(),
+    })
+  ),
+  isBlocked: z.boolean().optional(),
+  isFlagged: z.boolean().optional(),
+  isHeld: z.boolean().optional(),
 });

@@ -1,20 +1,34 @@
+import { Types } from 'mongoose';
+
+export enum ParcelStatus {
+  REQUESTED = 'Requested',
+  APPROVED = 'Approved',
+  DISPATCHED = 'Dispatched',
+  IN_TRANSIT = 'In Transit',
+  DELIVERED = 'Delivered',
+  CANCELLED = 'Cancelled',
+}
+
 export interface IStatusLog {
-  status: string;
+  status: ParcelStatus;
   timestamp: Date;
   updatedBy: string;
+  note?: string;
 }
 
 export interface IParcel {
+  trackingId: string;
   type: string;
   weight: number;
-  sender: string; // User ID or name
-  receiver: string; // User ID or name
+  sender: Types.ObjectId;
+  receiver: Types.ObjectId;
   pickupAddress: string;
   deliveryAddress: string;
   fee: number;
   deliveryDate: Date;
-  trackingId: string;
-  currentStatus?: string;
-  statusLogs?: IStatusLog[];
+  currentStatus: ParcelStatus;
+  statusLogs: IStatusLog[];
   isBlocked?: boolean;
+  isFlagged?: boolean;
+  isHeld?: boolean;
 }

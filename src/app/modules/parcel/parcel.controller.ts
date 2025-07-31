@@ -20,9 +20,11 @@ const getAllParcels = catchAsync(async (_req: Request, res: Response) => {
     statusCode: 200,
     success: true,
     message: "Parcels retrieved successfully",
-    data: result,
+    data: result.data,
+    meta: result.meta, // pass total count
   });
 });
+
 
 const getSingleParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.getSingleParcel(req.params.id);
@@ -33,6 +35,20 @@ const getSingleParcel = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+
+const updateParcel = catchAsync(async (req: Request, res: Response) => {
+  const result = await ParcelService.updateParcel(req.params.id, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel updated successfully",
+    data: result,
+  });
+});
+
+
+
 
 const deleteParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.deleteParcel(req.params.id);
@@ -48,5 +64,6 @@ export const ParcelController = {
   createParcel,
   getAllParcels,
   getSingleParcel,
+  updateParcel,
   deleteParcel,
 };
