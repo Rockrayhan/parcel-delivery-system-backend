@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { ParcelStatus } from './parcel.interface';
 
 export const createParcelZodSchema = z.object({
-  trackingId: z.string(),
+  // trackingId: z.string(),
   type: z.string(),
   weight: z.number().positive(),
-  sender: z.string(), // validate ObjectId elsewhere if needed
+  sender: z.string(), 
   receiver: z.string(),
   pickupAddress: z.string(),
   deliveryAddress: z.string(),
