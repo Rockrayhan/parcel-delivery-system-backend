@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ParcelService } from "./parcel.service";
 import { catchAsync } from "../../ultis/catchAsync";
 import { sendResponse } from "../../ultis/sendResponse";
+import { Parcel } from "./parcel.model";
 
 
 const createParcel = catchAsync(async (req: Request, res: Response) => {
@@ -49,6 +50,22 @@ const updateParcel = catchAsync(async (req: Request, res: Response) => {
 
 
 
+const getMyParcels = async (req: Request, res: Response) => {
+  const senderId = req.user?.userId;
+
+  const parcels = await Parcel.find({ sender: senderId });
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Sender's parcels fetched successfully",
+    data: parcels,
+  });
+};
+
+
+
+
 
 const deleteParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.deleteParcel(req.params.id);
@@ -66,4 +83,5 @@ export const ParcelController = {
   getSingleParcel,
   updateParcel,
   deleteParcel,
+  getMyParcels,
 };

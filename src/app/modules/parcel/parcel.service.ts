@@ -83,6 +83,14 @@ const updateParcel = async (
 };
 
 
+const getParcelsBySenderId = async (senderId: string) => {
+  return await Parcel.find({ sender: senderId });
+};
+
+
+
+
+
 
 const deleteParcel = async (id: string): Promise<IParcel | null> => {
   return await Parcel.findByIdAndDelete(id);
@@ -93,5 +101,6 @@ export const ParcelService = {
   getAllParcels,
   getSingleParcel,
   deleteParcel,
-  updateParcel
+  updateParcel,
+  getParcelsBySenderId,
 };
