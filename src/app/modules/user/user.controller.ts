@@ -4,7 +4,6 @@ import { sendResponse } from '../../ultis/sendResponse';
 import { UserService } from './user.service';
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
-    console.log("REQ BODY >>>>", req.body);
   const result = await UserService.createUser(req.body);
   sendResponse(res, {
     statusCode: 201,
