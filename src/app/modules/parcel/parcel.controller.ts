@@ -3,6 +3,10 @@ import { ParcelService } from "./parcel.service";
 import { catchAsync } from "../../ultis/catchAsync";
 import { sendResponse } from "../../ultis/sendResponse";
 import { Parcel } from "./parcel.model";
+import { UserRole } from "../user/user.interface";
+import AppError from "../../errorHelpers/AppError";
+import httpStatus from "http-status-codes"
+
 
 
 const createParcel = catchAsync(async (req: Request, res: Response) => {
@@ -14,6 +18,9 @@ const createParcel = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+
+
 
 const getAllParcels = catchAsync(async (_req: Request, res: Response) => {
   const result = await ParcelService.getAllParcels();
@@ -51,17 +58,27 @@ const updateParcel = catchAsync(async (req: Request, res: Response) => {
 
 
 const getMyParcels = async (req: Request, res: Response) => {
-  const senderId = req.user?.userId;
+  const userId = req.user?.userId;
+  const role = req.user?.role;
 
-  const parcels = await Parcel.find({ sender: senderId });
+  let parcels;
+
+  if (role === UserRole.SENDER) {
+    parcels = await Parcel.find({ sender: userId });
+  } else if (role === UserRole.RECEIVER) {
+    parcels = await Parcel.find({ receiver: userId });
+  } else {
+    throw new AppError(httpStatus.FORBIDDEN, "Unauthorized access");
+  }
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Sender's parcels fetched successfully",
+    message: `${role}'s parcels fetched successfully`,
     data: parcels,
   });
 };
+
 
 
 

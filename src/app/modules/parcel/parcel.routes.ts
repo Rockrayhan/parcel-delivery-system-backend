@@ -9,9 +9,9 @@ const router = express.Router();
 
 
 // give them at last-> api with :id params 
-router.post("/create", validateRequest(createParcelZodSchema), ParcelController.createParcel);
 router.get("/", checkAuth(UserRole.ADMIN), ParcelController.getAllParcels);
-router.get("/my-parcels",checkAuth(UserRole.SENDER),ParcelController.getMyParcels);
+router.post("/create", validateRequest(createParcelZodSchema), checkAuth(UserRole.SENDER, UserRole.ADMIN) ,ParcelController.createParcel);
+router.get("/my-parcels", checkAuth(UserRole.SENDER,UserRole.RECEIVER ), ParcelController.getMyParcels);
 
 
 
