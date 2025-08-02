@@ -39,6 +39,9 @@ const getSingleParcel = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
+
 const updateParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.updateParcel(req.params.id, req.body);
   sendResponse(res, {
@@ -48,6 +51,9 @@ const updateParcel = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+
+
 
 const getMyParcels = async (req: Request, res: Response) => {
   const userId = req.user?.userId;

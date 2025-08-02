@@ -34,7 +34,6 @@ function generateTrackingId(): string {
 }
 
 const createParcel = async (payload: Partial<IParcel>) => {
-
   const senderId = payload.sender;
   const sender = await User.findById(senderId);
 
@@ -43,13 +42,14 @@ const createParcel = async (payload: Partial<IParcel>) => {
   }
 
   if (sender.isBlocked) {
-    throw new AppError(httpStatus.FORBIDDEN, "Blocked users cannot create parcels.");
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Blocked users cannot create parcels."
+    );
   }
-
 
   const trackingId = generateTrackingId();
 
-  
   const parcelData = {
     ...payload,
     trackingId,
@@ -86,6 +86,11 @@ const getSingleParcel = async (id: string): Promise<IParcel | null> => {
   return await Parcel.findById(id);
 };
 
+
+
+
+
+
 const updateParcel = async (
   id: string,
   payload: Partial<IParcel>
@@ -94,9 +99,12 @@ const updateParcel = async (
     new: true,
     runValidators: true,
   });
-
   return parcel;
 };
+
+
+
+
 
 const getParcelsBySenderId = async (senderId: string) => {
   return await Parcel.find({ sender: senderId });
@@ -130,15 +138,12 @@ const cancelParcel = async (parcelId: string, senderId: string) => {
   return parcel;
 };
 
-
-
-
-
-
 const confirmParcelDelivery = async (parcelId: string, receiverId: string) => {
   const parcel = await Parcel.findOne({ _id: parcelId, receiver: receiverId });
 
-  if (!parcel) throw new AppError(httpStatus.NOT_FOUND,
+  if (!parcel)
+    throw new AppError(
+      httpStatus.NOT_FOUND,
       "Parcel not found or access denied"
     );
   if (parcel.currentStatus === "Delivered")
@@ -164,19 +169,12 @@ const confirmParcelDelivery = async (parcelId: string, receiverId: string) => {
   return parcel;
 };
 
-
-
-
-
 const getIncomingParcelsByReceiver = async (receiverId: string) => {
   return await Parcel.find({
     receiver: receiverId,
-    currentStatus: { $nin: ['Cancelled', 'Delivered'] }, // exclude these statuses
+    currentStatus: { $nin: ["Cancelled", "Delivered"] }, // exclude these statuses
   });
 };
-
-
-
 
 const toggleParcelBlock = async (parcelId: string, block: boolean) => {
   const parcel = await Parcel.findById(parcelId);
@@ -197,16 +195,9 @@ const toggleParcelBlock = async (parcelId: string, block: boolean) => {
   return parcel;
 };
 
-
-
-
 const deleteParcel = async (id: string): Promise<IParcel | null> => {
   return await Parcel.findByIdAndDelete(id);
 };
-
-
-
-
 
 export const ParcelService = {
   createParcel,

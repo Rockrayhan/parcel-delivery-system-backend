@@ -1,73 +1,38 @@
-========== datatables ============
+## 📚 Library Management Backend API
 
-// user Schema 
+A simple backend API for Parcel Management System — built with **Node.js**, **TypeScript**, **Express.js**, and **MongoDB (Mongoose)**.
 
-| Field       | Type    | Required | Description                       |
-| ----------- | ------- | -------- | --------------------------------- |
-| `name`      | String  | ✅        | Full name of the user             |
-| `email`     | String  | ✅        | Unique, used for login            |
-| `password`  | String  | ✅        | Hashed using bcrypt               |
-| `role`      | Enum    | ✅        | `admin` | `sender` | `receiver`   |
-| `isBlocked` | Boolean | ❌        | Optional, default `false`         |
-| `createdAt` | Date    | ✅        | Auto-managed                      |
-| `updatedAt` | Date    | ✅        | Auto-managed                      |
+### Live link: https://parcel-dms-backend.vercel.app/
 
+#### 🛠️ Technologies used: Mongoose, Express js , Node js, jwt token, TypeScript.
 
+#### ✨ Features :
 
+- JWT-based login system with three roles: admin, sender, receiver
 
-// parcel schema 
+- 🚚 Senders can:
 
+* Create parcel delivery requests
+* Cancel parcel (if not dispatched)
+* View all their parcels and status logs
 
-| Field             | Type     | Required | Description                                 |
-| ----------------- | -------- | -------- | ------------------------------------------- |
-| `trackingId`      | String   | ✅        | Unique, format: `TRK-YYYYMMDD-XXXX`         |
-| `type`            | String   | ✅        | e.g., Document, Box, Large Package          |
-| `weight`          | Number   | ✅        | Weight in KG                                |
-| `sender`          | ObjectId | ✅        | Ref to `User` (sender)                      |
-| `receiver`        | ObjectId | ✅        | Ref to `User` (receiver)                    |
-| `pickupAddress`   | String   | ✅        | Pickup location                             |
-| `deliveryAddress` | String   | ✅        | Delivery location                           |
-| `fee`             | Number   | ✅        | Delivery charge                             |
-| `deliveryDate`    | Date     | ✅        | Estimated or scheduled delivery date        |
-| `currentStatus`   | `enum`   | ✅        | Enum: Requested → Approved → ...            |
-| `statusLogs`      | Array    | ✅        | Embedded logs of status changes             |
-| `isBlocked`       | Boolean  | ❌        | Optional, for admin control (default false) |
-| `isFlagged`       | Boolean  | ❌        | Optional, for admin alert (default false)   |
-| `isHeld`          | Boolean  | ❌        | Optional, if held mid-way (default false)   |
-| `createdAt`       | Date     | ✅        | Auto-managed by Mongoose                    |
-| `updatedAt`       | Date     | ✅        | Auto-managed by Mongoose                    |
+- Receivers can:
+
+* View incoming parcels
+* Confirm parcel delivery
+* Delivery history
+
+- Admins can:
+
+* View and manage all users and parcels
+* Block or unblock users or parcels
+* Change parcel status (e.g., Approved, In Transit, Delivered)
 
 
+#### ⚙️ How to Set Up Locally
 
-
-
-
-
-export enum ParcelStatus {
-  REQUESTED = 'Requested',
-  APPROVED = 'Approved',
-  DISPATCHED = 'Dispatched',
-  IN_TRANSIT = 'In Transit',
-  DELIVERED = 'Delivered',
-  CANCELLED = 'Cancelled'
-}
-
-
-
-export interface IStatusLog {
-  status: ParcelStatus;
-  timestamp: Date;
-  updatedBy: string; // userId or role name
-  note?: string;     // optional message for the log
-}
-
-
-
-
-<!-- 
-// todo
-
-
-5. Will you allow search/filter by status or delivery time?
-
- -->
+- First you have to install node and github in your machine.
+- then git clone the repository or download the zip file
+- in root folder go to the terminal, hit - `npm i` then `npm run dev`
+- copy `.env.example` to `.env` and in the `.env` file give your credentials.
+- access api locally at `http://localhost:5000/api/` in your browser.

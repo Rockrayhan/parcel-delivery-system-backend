@@ -41,8 +41,8 @@ router.patch("/unblock/:id", checkAuth(UserRole.ADMIN), ParcelController.unblock
 
 
 
-router.get("/:id", ParcelController.getSingleParcel);
-router.patch("/update/:id", ParcelController.updateParcel);
-router.delete("/delete/:id", checkAuth(UserRole.ADMIN), ParcelController.deleteParcel);
+// router.get("/:id", ParcelController.getSingleParcel);
+router.patch("/update/:id", checkAuth(UserRole.ADMIN), ParcelController.updateParcel);
+router.delete("/delete/:id",  checkAuth(UserRole.ADMIN), ParcelController.deleteParcel);
 
 export const ParcelRoutes = router;
