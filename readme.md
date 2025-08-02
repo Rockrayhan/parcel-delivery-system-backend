@@ -60,3 +60,16 @@ export interface IStatusLog {
   updatedBy: string; // userId or role name
   note?: string;     // optional message for the log
 }
+
+
+
+
+<!-- 
+// todo
+
+
+3. if user is blocked can't make parcel
+4. How to track parcel history by sender or receiver?
+5. Will you allow search/filter by status or delivery time?
+6. logout //
+ -->

@@ -9,15 +9,36 @@ const router = express.Router();
 
 
 // give them at last-> api with :id params 
-router.get("/", checkAuth(UserRole.ADMIN), ParcelController.getAllParcels);
-router.post("/create", validateRequest(createParcelZodSchema), checkAuth(UserRole.SENDER, UserRole.ADMIN) ,ParcelController.createParcel);
-router.get("/my-parcels", checkAuth(UserRole.SENDER,UserRole.RECEIVER ), ParcelController.getMyParcels);
 
+// admin
+router.get("/", checkAuth(UserRole.ADMIN), ParcelController.getAllParcels);
+
+// sender
+router.post("/create", validateRequest(createParcelZodSchema), checkAuth(UserRole.SENDER) ,ParcelController.createParcel);
+
+// sender  & receiver // check history
+router.get("/my-parcels", checkAuth(UserRole.SENDER, UserRole.RECEIVER), ParcelController.getMyParcels);
+
+// receiver
+router.get("/incoming", checkAuth(UserRole.RECEIVER), ParcelController.getIncomingParcels);
+
+
+// sender
+router.patch("/cancel/:id", checkAuth(UserRole.SENDER), ParcelController.cancelParcel);
+
+
+// receiver
+router.patch("/confirm/:id", checkAuth(UserRole.RECEIVER), ParcelController.confirmDelivery);
+
+
+// admin
+router.patch("/block/:id", checkAuth(UserRole.ADMIN), ParcelController.blockParcel);
+router.patch("/unblock/:id", checkAuth(UserRole.ADMIN), ParcelController.unblockParcel);
 
 
 
 router.get("/:id", ParcelController.getSingleParcel);
 router.patch("/update/:id", ParcelController.updateParcel);
-router.delete("/delete/:id", ParcelController.deleteParcel);
+router.delete("/delete/:id", checkAuth(UserRole.ADMIN), ParcelController.deleteParcel);
 
 export const ParcelRoutes = router;

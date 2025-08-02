@@ -33,6 +33,26 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
+
+const toggleBlockUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { block } = req.body; 
+
+  const result = await UserService.toggleBlockUser(id, block);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: `User has been ${block ? 'blocked' : 'unblocked'} successfully`,
+    data: result,
+  });
+});
+
+
+
+
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.deleteUser(req.params.id);
   sendResponse(res, {
@@ -48,4 +68,5 @@ export const UserController = {
   getAllUsers,
   getSingleUser,
   deleteUser,
+  toggleBlockUser
 };

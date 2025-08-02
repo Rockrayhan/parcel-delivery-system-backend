@@ -80,6 +80,73 @@ const getMyParcels = async (req: Request, res: Response) => {
 };
 
 
+const cancelParcel = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const parcelId = req.params.id;
+
+  const result = await ParcelService.cancelParcel(parcelId, userId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel cancelled successfully",
+    data: result,
+  });
+});
+
+
+
+const getIncomingParcels = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const result = await ParcelService.getIncomingParcelsByReceiver(userId);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Receiver's parcels fetched successfully",
+    data: result,
+  });
+});
+
+
+const confirmDelivery = catchAsync(async (req: Request, res: Response) => {
+  const parcelId = req.params.id;
+  const userId = req.user?.userId;
+
+  const result = await ParcelService.confirmParcelDelivery(parcelId, userId);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel marked as delivered",
+    data: result,
+  });
+});
+
+
+
+
+const blockParcel = catchAsync(async (req: Request, res: Response) => {
+  const parcelId = req.params.id;
+  const result = await ParcelService.toggleParcelBlock(parcelId, true);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel blocked successfully",
+    data: result,
+  });
+});
+
+const unblockParcel = catchAsync(async (req: Request, res: Response) => {
+  const parcelId = req.params.id;
+  const result = await ParcelService.toggleParcelBlock(parcelId, false);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel unblocked successfully",
+    data: result,
+  });
+});
+
 
 
 
@@ -101,4 +168,9 @@ export const ParcelController = {
   updateParcel,
   deleteParcel,
   getMyParcels,
+  cancelParcel,
+  getIncomingParcels,
+  confirmDelivery,
+  blockParcel,
+  unblockParcel,
 };

@@ -7,6 +7,7 @@ export enum ParcelStatus {
   IN_TRANSIT = 'In Transit',
   DELIVERED = 'Delivered',
   CANCELLED = 'Cancelled',
+  RETURNED     = 'Returned',    
 }
 
 export interface IStatusLog {

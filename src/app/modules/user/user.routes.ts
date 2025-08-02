@@ -13,4 +13,9 @@ router.get('/', checkAuth(UserRole.ADMIN), UserController.getAllUsers);
 router.get('/:id', UserController.getSingleUser);
 router.delete('/delete/:id', UserController.deleteUser);
 
+// routes/user.route.ts or wherever UserRoutes is defined
+
+router.patch('/block/:id',checkAuth(UserRole.ADMIN),UserController.toggleBlockUser );
+
+
 export const UserRoutes = router;

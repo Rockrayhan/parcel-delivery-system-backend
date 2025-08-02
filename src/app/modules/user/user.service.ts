@@ -13,6 +13,21 @@ const getSingleUser = async (id: string): Promise<IUser | null> => {
   return await User.findById(id);
 };
 
+
+
+const toggleBlockUser = async (
+  userId: string,
+  block: boolean
+): Promise<IUser | null> => {
+  const user = await User.findById(userId);
+  if (!user) throw new Error('User not found');
+
+  user.isBlocked = block;
+  await user.save();
+  return user;
+};
+
+
 const deleteUser = async (id: string): Promise<IUser | null> => {
   return await User.findByIdAndDelete(id);
 };
@@ -22,4 +37,5 @@ export const UserService = {
   getAllUsers,
   getSingleUser,
   deleteUser,
+  toggleBlockUser
 };
