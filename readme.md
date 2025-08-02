@@ -68,8 +68,6 @@ export interface IStatusLog {
 // todo
 
 
-3. if user is blocked can't make parcel
-4. How to track parcel history by sender or receiver?
 5. Will you allow search/filter by status or delivery time?
-6. logout //
+
  -->

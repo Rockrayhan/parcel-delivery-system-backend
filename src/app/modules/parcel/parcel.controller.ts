@@ -5,9 +5,8 @@ import { sendResponse } from "../../ultis/sendResponse";
 import { Parcel } from "./parcel.model";
 import { UserRole } from "../user/user.interface";
 import AppError from "../../errorHelpers/AppError";
-import httpStatus from "http-status-codes"
-
-
+import httpStatus from "http-status-codes";
+import { ParcelStatus } from "./parcel.interface";
 
 const createParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.createParcel(req.body);
@@ -18,9 +17,6 @@ const createParcel = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
-
-
 
 const getAllParcels = catchAsync(async (_req: Request, res: Response) => {
   const result = await ParcelService.getAllParcels();
@@ -33,7 +29,6 @@ const getAllParcels = catchAsync(async (_req: Request, res: Response) => {
   });
 });
 
-
 const getSingleParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.getSingleParcel(req.params.id);
   sendResponse(res, {
@@ -43,7 +38,6 @@ const getSingleParcel = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 
 const updateParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.updateParcel(req.params.id, req.body);
@@ -55,21 +49,34 @@ const updateParcel = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
-
 const getMyParcels = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const role = req.user?.role;
+  const status = req.query.status as string; 
 
-  let parcels;
+  let filter: any = {};
 
   if (role === UserRole.SENDER) {
-    parcels = await Parcel.find({ sender: userId });
+    filter.sender = userId;
   } else if (role === UserRole.RECEIVER) {
-    parcels = await Parcel.find({ receiver: userId });
+    filter.receiver = userId;
   } else {
     throw new AppError(httpStatus.FORBIDDEN, "Unauthorized access");
   }
+
+
+  // check proper filer value
+  if (status && !Object.values(ParcelStatus).includes(status as ParcelStatus)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid parcel status");
+  }
+
+
+
+  if (status) {
+    filter.currentStatus = status;
+  }
+
+  const parcels = await Parcel.find(filter);
 
   sendResponse(res, {
     statusCode: 200,
@@ -79,6 +86,35 @@ const getMyParcels = async (req: Request, res: Response) => {
   });
 };
 
+const trackParcelHistory = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const role = req.user?.role;
+  const { trackingId } = req.params;
+
+  const parcel = await Parcel.findOne({ trackingId });
+
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+  }
+
+  // Ensure the user is either sender or receiver of the parcel
+  if (
+    (role === UserRole.SENDER && parcel.sender.toString() !== userId) ||
+    (role === UserRole.RECEIVER && parcel.receiver.toString() !== userId)
+  ) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Unauthorized access to parcel history"
+    );
+  }
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Parcel tracking history fetched successfully",
+    data: parcel.statusLogs,
+  });
+});
 
 const cancelParcel = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
@@ -94,8 +130,6 @@ const cancelParcel = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
-
 const getIncomingParcels = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const result = await ParcelService.getIncomingParcelsByReceiver(userId);
@@ -106,7 +140,6 @@ const getIncomingParcels = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 
 const confirmDelivery = catchAsync(async (req: Request, res: Response) => {
   const parcelId = req.params.id;
@@ -121,9 +154,6 @@ const confirmDelivery = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
-
-
 
 const blockParcel = catchAsync(async (req: Request, res: Response) => {
   const parcelId = req.params.id;
@@ -147,10 +177,6 @@ const unblockParcel = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
-
-
-
 const deleteParcel = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.deleteParcel(req.params.id);
   sendResponse(res, {
@@ -173,4 +199,5 @@ export const ParcelController = {
   confirmDelivery,
   blockParcel,
   unblockParcel,
+  trackParcelHistory,
 };

@@ -23,6 +23,10 @@ router.get("/my-parcels", checkAuth(UserRole.SENDER, UserRole.RECEIVER), ParcelC
 router.get("/incoming", checkAuth(UserRole.RECEIVER), ParcelController.getIncomingParcels);
 
 
+// Sender & Receiver both can see parcel status history
+router.get("/track/:trackingId", checkAuth(UserRole.SENDER, UserRole.RECEIVER), ParcelController.trackParcelHistory);
+
+
 // sender
 router.patch("/cancel/:id", checkAuth(UserRole.SENDER), ParcelController.cancelParcel);
 
