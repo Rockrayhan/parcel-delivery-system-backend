@@ -95,10 +95,26 @@ const updateParcel = async (
   id: string,
   payload: Partial<IParcel>
 ): Promise<IParcel | null> => {
-  const parcel = await Parcel.findByIdAndUpdate(id, payload, {
-    new: true,
-    runValidators: true,
-  });
+  const parcel = await Parcel.findById(id);
+  if (!parcel) throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+
+  // Handle status change and log it
+  if (payload.currentStatus && payload.currentStatus !== parcel.currentStatus) {
+    parcel.statusLogs.push({
+      status: payload.currentStatus,
+      timestamp: new Date(),
+      updatedBy: "admin", // or dynamically from req.user.role
+      note: (payload as any).note || `Status updated to ${payload.currentStatus}`,
+
+    });
+
+    parcel.currentStatus = payload.currentStatus;
+  }
+
+  // Update other fields directly
+  Object.assign(parcel, payload);
+  
+  await parcel.save();
   return parcel;
 };
 
