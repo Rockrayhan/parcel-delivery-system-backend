@@ -1,4 +1,4 @@
-## 📚 Library Management Backend API
+## 📚 Parcel Delivery Management Backend API
 
 A simple backend API for Parcel Management System — built with **Node.js**, **TypeScript**, **Express.js**, and **MongoDB (Mongoose)**.
 

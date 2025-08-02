@@ -17,5 +17,5 @@ router.get('/', (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), use
 router.get('/:id', user_controller_1.UserController.getSingleUser);
 router.delete('/delete/:id', user_controller_1.UserController.deleteUser);
 // routes/user.route.ts or wherever UserRoutes is defined
-router.patch('/block/:id', (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), user_controller_1.UserController.toggleBlockUser);
+router.patch('/block/:id', (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), (0, validateRequest_1.validateRequest)(user_validation_1.updateUserZodSchema), user_controller_1.UserController.toggleBlockUser);
 exports.UserRoutes = router;

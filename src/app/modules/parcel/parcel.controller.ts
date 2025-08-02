@@ -122,6 +122,9 @@ const trackParcelHistory = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
+
 const cancelParcel = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const parcelId = req.params.id;
@@ -135,6 +138,8 @@ const cancelParcel = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+
 
 const getIncomingParcels = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;

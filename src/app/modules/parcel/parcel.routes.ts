@@ -1,7 +1,7 @@
 import express from "express";
 import { ParcelController } from "./parcel.controller";
 import { validateRequest } from "../../middlewires/validateRequest";
-import { createParcelZodSchema } from "./parcel.validation";
+import { createParcelZodSchema, updateParcelZodSchema } from "./parcel.validation";
 import { UserRole } from "../user/user.interface";
 import { checkAuth } from "../../middlewires/checkAuth";
 
@@ -28,7 +28,7 @@ router.get("/track/:trackingId", checkAuth(UserRole.SENDER, UserRole.RECEIVER), 
 
 
 // sender
-router.patch("/cancel/:id", checkAuth(UserRole.SENDER), ParcelController.cancelParcel);
+router.patch("/cancel/:id", checkAuth(UserRole.SENDER),  ParcelController.cancelParcel);
 
 
 // receiver
@@ -36,13 +36,13 @@ router.patch("/confirm/:id", checkAuth(UserRole.RECEIVER), ParcelController.conf
 
 
 // admin
-router.patch("/block/:id", checkAuth(UserRole.ADMIN), ParcelController.blockParcel);
-router.patch("/unblock/:id", checkAuth(UserRole.ADMIN), ParcelController.unblockParcel);
+router.patch("/block/:id", checkAuth(UserRole.ADMIN),  ParcelController.blockParcel);
+router.patch("/unblock/:id", checkAuth(UserRole.ADMIN),  ParcelController.unblockParcel);
 
 
 
 // router.get("/:id", ParcelController.getSingleParcel);
-router.patch("/update/:id", checkAuth(UserRole.ADMIN), ParcelController.updateParcel);
-router.delete("/delete/:id",  checkAuth(UserRole.ADMIN), ParcelController.deleteParcel);
+router.patch("/update/:id", checkAuth(UserRole.ADMIN), validateRequest(updateParcelZodSchema), ParcelController.updateParcel);
+router.delete("/delete/:id",  checkAuth(UserRole.ADMIN),  ParcelController.deleteParcel);
 
 export const ParcelRoutes = router;

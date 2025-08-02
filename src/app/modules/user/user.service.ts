@@ -1,5 +1,10 @@
 import { User } from './user.model';
 import { IUser } from './user.interface';
+import AppError from '../../errorHelpers/AppError';
+import httpStatus from "http-status-codes";
+
+
+
 
 const createUser = async (userData: IUser): Promise<IUser> => {
   return await User.create(userData);
@@ -15,17 +20,18 @@ const getSingleUser = async (id: string): Promise<IUser | null> => {
 
 
 
-const toggleBlockUser = async (
-  userId: string,
-  block: boolean
-): Promise<IUser | null> => {
-  const user = await User.findById(userId);
-  if (!user) throw new Error('User not found');
-
-  user.isBlocked = block;
-  await user.save();
+const toggleBlockUser = async (userId: string, isBlocked: boolean) => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { isBlocked },
+    { new: true, runValidators: true }
+  );
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
   return user;
 };
+
 
 
 const deleteUser = async (id: string): Promise<IUser | null> => {

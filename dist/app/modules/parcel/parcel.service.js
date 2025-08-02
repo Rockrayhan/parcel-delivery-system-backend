@@ -127,7 +127,7 @@ const confirmParcelDelivery = (parcelId, receiverId) => __awaiter(void 0, void 0
 const getIncomingParcelsByReceiver = (receiverId) => __awaiter(void 0, void 0, void 0, function* () {
     return yield parcel_model_1.Parcel.find({
         receiver: receiverId,
-        currentStatus: { $nin: ['Cancelled', 'Delivered'] }, // exclude these statuses
+        currentStatus: { $nin: ["Cancelled", "Delivered"] }, // exclude these statuses
     });
 });
 const toggleParcelBlock = (parcelId, block) => __awaiter(void 0, void 0, void 0, function* () {

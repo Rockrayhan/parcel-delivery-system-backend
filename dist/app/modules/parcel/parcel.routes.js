@@ -29,7 +29,7 @@ router.patch("/confirm/:id", (0, checkAuth_1.checkAuth)(user_interface_1.UserRol
 // admin
 router.patch("/block/:id", (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), parcel_controller_1.ParcelController.blockParcel);
 router.patch("/unblock/:id", (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), parcel_controller_1.ParcelController.unblockParcel);
-router.get("/:id", parcel_controller_1.ParcelController.getSingleParcel);
-router.patch("/update/:id", parcel_controller_1.ParcelController.updateParcel);
+// router.get("/:id", ParcelController.getSingleParcel);
+router.patch("/update/:id", (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), (0, validateRequest_1.validateRequest)(parcel_validation_1.updateParcelZodSchema), parcel_controller_1.ParcelController.updateParcel);
 router.delete("/delete/:id", (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), parcel_controller_1.ParcelController.deleteParcel);
 exports.ParcelRoutes = router;

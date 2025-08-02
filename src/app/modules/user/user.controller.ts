@@ -38,14 +38,14 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
 
 const toggleBlockUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { block } = req.body; 
+  const { isBlocked } = req.body;
 
-  const result = await UserService.toggleBlockUser(id, block);
+  const result = await UserService.toggleBlockUser(id, isBlocked);
 
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: `User has been ${block ? 'blocked' : 'unblocked'} successfully`,
+    message: `User has been ${isBlocked ? 'blocked' : 'unblocked'} successfully`,
     data: result,
   });
 });
