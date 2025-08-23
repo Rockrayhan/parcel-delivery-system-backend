@@ -78,10 +78,22 @@ const getSingleParcel = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return yield parcel_model_1.Parcel.findById(id);
 });
 const updateParcel = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const parcel = yield parcel_model_1.Parcel.findByIdAndUpdate(id, payload, {
-        new: true,
-        runValidators: true,
-    });
+    const parcel = yield parcel_model_1.Parcel.findById(id);
+    if (!parcel)
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Parcel not found");
+    // Handle status change and log it
+    if (payload.currentStatus && payload.currentStatus !== parcel.currentStatus) {
+        parcel.statusLogs.push({
+            status: payload.currentStatus,
+            timestamp: new Date(),
+            updatedBy: "admin", // or dynamically from req.user.role
+            note: payload.note || `Status updated to ${payload.currentStatus}`,
+        });
+        parcel.currentStatus = payload.currentStatus;
+    }
+    // Update other fields directly
+    Object.assign(parcel, payload);
+    yield parcel.save();
     return parcel;
 });
 const getParcelsBySenderId = (senderId) => __awaiter(void 0, void 0, void 0, function* () {
