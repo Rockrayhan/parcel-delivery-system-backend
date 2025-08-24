@@ -18,6 +18,7 @@ const setCookie_1 = require("../../ultis/setCookie");
 const sendResponse_1 = require("../../ultis/sendResponse");
 const catchAsync_1 = require("../../ultis/catchAsync");
 const auth_service_1 = require("./auth.service");
+const env_1 = require("../../config/env");
 const credentialsLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const loginInfo = yield auth_service_1.AuthServices.credentialsLogin(req.body);
     // res.cookie("accessToken", loginInfo.accessToken, {
@@ -37,26 +38,26 @@ const credentialsLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awai
     });
 }));
 const logout = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    res.clearCookie("accessToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-    });
-    res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "lax",
-    });
     // res.clearCookie("accessToken", {
     //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production", // true on vercel
-    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    //   secure: true,
+    //   sameSite: "lax",
     // });
     // res.clearCookie("refreshToken", {
     //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    //   secure: true,
+    //   sameSite: "lax",
     // });
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: env_1.envVars.NODE_ENV === "production", // true on vercel
+        sameSite: env_1.envVars.NODE_ENV === "production" ? "none" : "lax",
+    });
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: env_1.envVars.NODE_ENV === "production",
+        sameSite: env_1.envVars.NODE_ENV === "production" ? "none" : "lax",
+    });
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,

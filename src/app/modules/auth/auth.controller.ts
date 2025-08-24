@@ -4,6 +4,7 @@ import { setAuthCookie } from "../../ultis/setCookie";
 import { sendResponse } from "../../ultis/sendResponse";
 import { catchAsync } from "../../ultis/catchAsync";
 import { AuthServices } from "./auth.service";
+import { envVars } from "../../config/env";
 
 const credentialsLogin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -32,27 +33,28 @@ const credentialsLogin = catchAsync(
 
 const logout = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-    });
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-    });
 
     // res.clearCookie("accessToken", {
     //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production", // true on vercel
-    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    //   secure: true,
+    //   sameSite: "lax",
     // });
     // res.clearCookie("refreshToken", {
     //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    //   secure: true,
+    //   sameSite: "lax",
     // });
+
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: envVars.NODE_ENV === "production", // true on vercel
+      sameSite: envVars.NODE_ENV === "production" ? "none" : "lax",
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: envVars.NODE_ENV === "production",
+      sameSite: envVars.NODE_ENV === "production" ? "none" : "lax",
+    });
 
     sendResponse(res, {
       success: true,
