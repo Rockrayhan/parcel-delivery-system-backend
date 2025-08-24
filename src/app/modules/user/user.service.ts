@@ -19,6 +19,13 @@ const getSingleUser = async (id: string): Promise<IUser | null> => {
 };
 
 
+const getMe = async (userId: string) => {
+    const user = await User.findById(userId).select("-password");
+    return {
+        data: user
+    }
+};
+
 
 const toggleBlockUser = async (userId: string, isBlocked: boolean) => {
   const user = await User.findByIdAndUpdate(
@@ -43,5 +50,6 @@ export const UserService = {
   getAllUsers,
   getSingleUser,
   deleteUser,
-  toggleBlockUser
+  toggleBlockUser,
+  getMe
 };

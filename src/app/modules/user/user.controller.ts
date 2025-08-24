@@ -1,7 +1,9 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { catchAsync } from '../../ultis/catchAsync';
 import { sendResponse } from '../../ultis/sendResponse';
 import { UserService } from './user.service';
+import { JwtPayload } from 'jsonwebtoken';
+import httpStatus from "http-status-codes";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createUser(req.body);
@@ -33,6 +35,23 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await UserService.getMe(decodedToken.userId);
+
+    // res.status(httpStatus.OK).json({
+    //     success: true,
+    //     message: "All Users Retrieved Successfully",
+    //     data: users
+    // })
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "Your profile Retrieved Successfully",
+        data: result.data
+    })
+})
 
 
 
@@ -68,5 +87,7 @@ export const UserController = {
   getAllUsers,
   getSingleUser,
   deleteUser,
-  toggleBlockUser
+  toggleBlockUser,
+  getMe
+  
 };

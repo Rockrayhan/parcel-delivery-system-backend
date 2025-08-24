@@ -10,6 +10,7 @@ const router = express.Router();
 router.post('/register', validateRequest(createUserZodSchema), UserController.createUser);
 // router.get('/', UserController.getAllUsers);
 router.get('/', checkAuth(UserRole.ADMIN), UserController.getAllUsers);
+router.get("/me", checkAuth(...Object.values(UserRole)), UserController.getMe)
 router.get('/:id', UserController.getSingleUser);
 router.delete('/delete/:id', UserController.deleteUser);
 
