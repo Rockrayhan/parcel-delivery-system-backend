@@ -25,6 +25,12 @@ const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
 const getSingleUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return yield user_model_1.User.findById(id);
 });
+const getMe = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId).select("-password");
+    return {
+        data: user
+    };
+});
 const toggleBlockUser = (userId, isBlocked) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findByIdAndUpdate(userId, { isBlocked }, { new: true, runValidators: true });
     if (!user) {
@@ -40,5 +46,6 @@ exports.UserService = {
     getAllUsers,
     getSingleUser,
     deleteUser,
-    toggleBlockUser
+    toggleBlockUser,
+    getMe
 };

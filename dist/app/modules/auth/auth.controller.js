@@ -39,14 +39,24 @@ const credentialsLogin = (0, catchAsync_1.catchAsync)((req, res, next) => __awai
 const logout = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     res.clearCookie("accessToken", {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "lax",
     });
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: "lax",
     });
+    // res.clearCookie("accessToken", {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production", // true on vercel
+    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    // });
+    // res.clearCookie("refreshToken", {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    // });
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,

@@ -14,6 +14,7 @@ const router = express_1.default.Router();
 router.post('/register', (0, validateRequest_1.validateRequest)(user_validation_1.createUserZodSchema), user_controller_1.UserController.createUser);
 // router.get('/', UserController.getAllUsers);
 router.get('/', (0, checkAuth_1.checkAuth)(user_interface_1.UserRole.ADMIN), user_controller_1.UserController.getAllUsers);
+router.get("/me", (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.UserRole)), user_controller_1.UserController.getMe);
 router.get('/:id', user_controller_1.UserController.getSingleUser);
 router.delete('/delete/:id', user_controller_1.UserController.deleteUser);
 // routes/user.route.ts or wherever UserRoutes is defined
