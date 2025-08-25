@@ -33,3 +33,9 @@ export interface IParcel {
   isFlagged?: boolean;
   isHeld?: boolean;
 }
+
+
+// ✅ New: Request interface for createParcel API
+export interface IParcelCreateRequest extends Partial<IParcel> {
+  receiverEmail: string; // email instead of ObjectId
+}

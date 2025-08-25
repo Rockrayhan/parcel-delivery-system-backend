@@ -18,6 +18,8 @@ const createParcel = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
 const getAllParcels = catchAsync(async (_req: Request, res: Response) => {
   const result = await ParcelService.getAllParcels();
   sendResponse(res, {
@@ -55,10 +57,48 @@ const updateParcel = catchAsync(async (req: Request, res: Response) => {
 
 
 
+// const getMyParcels = async (req: Request, res: Response) => {
+//   const userId = req.user?.userId;
+//   const role = req.user?.role;
+//   const status = req.query.status as string; 
+
+//   let filter: any = {};
+
+//   if (role === UserRole.SENDER) {
+//     filter.sender = userId;
+//   } else if (role === UserRole.RECEIVER) {
+//     filter.receiver = userId;
+//   } else {
+//     throw new AppError(httpStatus.FORBIDDEN, "Unauthorized access");
+//   }
+
+
+//   // check proper filer value
+//   if (status && !Object.values(ParcelStatus).includes(status as ParcelStatus)) {
+//     throw new AppError(httpStatus.BAD_REQUEST, "Invalid parcel status");
+//   }
+
+
+
+//   if (status) {
+//     filter.currentStatus = status;
+//   }
+
+//   const parcels = await Parcel.find(filter);
+
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: `${role}'s parcels fetched successfully`,
+//     data: parcels,
+//   });
+// };
+
+
 const getMyParcels = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const role = req.user?.role;
-  const status = req.query.status as string; 
+  const status = req.query.status as string;
 
   let filter: any = {};
 
@@ -70,19 +110,18 @@ const getMyParcels = async (req: Request, res: Response) => {
     throw new AppError(httpStatus.FORBIDDEN, "Unauthorized access");
   }
 
-
-  // check proper filer value
   if (status && !Object.values(ParcelStatus).includes(status as ParcelStatus)) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid parcel status");
   }
-
-
 
   if (status) {
     filter.currentStatus = status;
   }
 
-  const parcels = await Parcel.find(filter);
+  // ✅ Populate sender and receiver info
+  const parcels = await Parcel.find(filter)
+    .populate("sender", "name email")    // show sender name & email
+    .populate("receiver", "name email"); // show receiver name & email
 
   sendResponse(res, {
     statusCode: 200,
@@ -91,6 +130,9 @@ const getMyParcels = async (req: Request, res: Response) => {
     data: parcels,
   });
 };
+
+
+
 
 const trackParcelHistory = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId;

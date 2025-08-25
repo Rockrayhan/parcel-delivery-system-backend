@@ -1,28 +1,10 @@
-// parcel.service.ts
 import { Parcel } from "./parcel.model";
-import { IParcel } from "./parcel.interface";
+import { IParcel, IParcelCreateRequest } from "./parcel.interface";
 import { ParcelStatus } from "./parcel.interface";
 import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import { User } from "../user/user.model";
 
-// const createParcel = async (payload: IParcel): Promise<IParcel> => {
-//   // Auto-push first log into statusLogs
-//   const initialStatusLog = {
-//     status: payload.currentStatus || ParcelStatus.REQUESTED,
-//     timestamp: new Date(),
-//     updatedBy: "system", // Replace with user ID or role if available
-//     note: "Parcel created",
-//   };
-
-//   const newParcel = new Parcel({
-//     ...payload,
-//     currentStatus: payload.currentStatus || ParcelStatus.REQUESTED,
-//     statusLogs: [initialStatusLog],
-//   });
-
-//   return await newParcel.save();
-// };
 
 function generateTrackingId(): string {
   const date = new Date();
@@ -33,30 +15,70 @@ function generateTrackingId(): string {
   return `TRK-${yyyy}${mm}${dd}-${randomNum}`;
 }
 
-const createParcel = async (payload: Partial<IParcel>) => {
+
+// const createParcel = async (payload: Partial<IParcel>) => {
+//   const senderId = payload.sender;
+//   const sender = await User.findById(senderId);
+
+//   if (!sender) {
+//     throw new AppError(httpStatus.NOT_FOUND, "Sender not found.");
+//   }
+
+//   if (sender.isBlocked) {
+//     throw new AppError(
+//       httpStatus.FORBIDDEN,
+//       "Blocked users cannot create parcels."
+//     );
+//   }
+
+//   const trackingId = generateTrackingId();
+
+//   const parcelData = {
+//     ...payload,
+//     trackingId,
+//     currentStatus: "Requested", // initial status
+//     statusLogs: [
+//       {
+//         status: "Requested",
+//         timestamp: new Date(),
+//         updatedBy: "system",
+//         note: "Parcel created",
+//       },
+//     ],
+//   };
+
+//   const parcel = await Parcel.create(parcelData);
+
+//   return parcel;
+// };
+
+const createParcel = async (payload: IParcelCreateRequest) => {
   const senderId = payload.sender;
   const sender = await User.findById(senderId);
 
   if (!sender) {
     throw new AppError(httpStatus.NOT_FOUND, "Sender not found.");
   }
-
   if (sender.isBlocked) {
-    throw new AppError(
-      httpStatus.FORBIDDEN,
-      "Blocked users cannot create parcels."
-    );
+    throw new AppError(httpStatus.FORBIDDEN, "Blocked users cannot create parcels.");
+  }
+
+  // ✅ Resolve receiver by email
+  const receiver = await User.findOne({ email: payload.receiverEmail });
+  if (!receiver) {
+    throw new AppError(httpStatus.NOT_FOUND, "Receiver not found with this email.");
   }
 
   const trackingId = generateTrackingId();
 
-  const parcelData = {
+  const parcelData: Partial<IParcel> = {
     ...payload,
+    receiver: receiver._id,  // store ObjectId in DB
     trackingId,
-    currentStatus: "Requested", // initial status
+    currentStatus: ParcelStatus.REQUESTED,
     statusLogs: [
       {
-        status: "Requested",
+        status: ParcelStatus.REQUESTED,
         timestamp: new Date(),
         updatedBy: "system",
         note: "Parcel created",
@@ -64,14 +86,19 @@ const createParcel = async (payload: Partial<IParcel>) => {
     ],
   };
 
-  // Step 4: Create parcel in DB
-  const parcel = await Parcel.create(parcelData);
+  delete (parcelData as any).receiverEmail; // not in schema
 
-  return parcel;
+  return await Parcel.create(parcelData);
 };
 
+
+
+
 const getAllParcels = async () => {
-  const parcels = await Parcel.find();
+  const parcels = await Parcel.find()
+    .populate("receiver", "name email")  // ✅ fetch only name & email
+    .populate("sender", "name email");   // (optional) also show sender info
+
   const total = await Parcel.countDocuments();
 
   return {
@@ -81,6 +108,9 @@ const getAllParcels = async () => {
     data: parcels,
   };
 };
+
+
+
 
 const getSingleParcel = async (id: string): Promise<IParcel | null> => {
   return await Parcel.findById(id);
@@ -125,6 +155,7 @@ const updateParcel = async (
 const getParcelsBySenderId = async (senderId: string) => {
   return await Parcel.find({ sender: senderId });
 };
+
 
 const cancelParcel = async (parcelId: string, senderId: string) => {
   const parcel = await Parcel.findOne({ _id: parcelId, sender: senderId });
