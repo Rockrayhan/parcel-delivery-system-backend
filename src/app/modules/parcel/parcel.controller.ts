@@ -194,6 +194,8 @@ const getIncomingParcels = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
 const confirmDelivery = catchAsync(async (req: Request, res: Response) => {
   const parcelId = req.params.id;
   const userId = req.user?.userId;

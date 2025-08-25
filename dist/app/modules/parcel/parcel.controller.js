@@ -58,6 +58,33 @@ const updateParcel = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
         data: result,
     });
 }));
+// const getMyParcels = async (req: Request, res: Response) => {
+//   const userId = req.user?.userId;
+//   const role = req.user?.role;
+//   const status = req.query.status as string; 
+//   let filter: any = {};
+//   if (role === UserRole.SENDER) {
+//     filter.sender = userId;
+//   } else if (role === UserRole.RECEIVER) {
+//     filter.receiver = userId;
+//   } else {
+//     throw new AppError(httpStatus.FORBIDDEN, "Unauthorized access");
+//   }
+//   // check proper filer value
+//   if (status && !Object.values(ParcelStatus).includes(status as ParcelStatus)) {
+//     throw new AppError(httpStatus.BAD_REQUEST, "Invalid parcel status");
+//   }
+//   if (status) {
+//     filter.currentStatus = status;
+//   }
+//   const parcels = await Parcel.find(filter);
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: `${role}'s parcels fetched successfully`,
+//     data: parcels,
+//   });
+// };
 const getMyParcels = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
@@ -73,14 +100,16 @@ const getMyParcels = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     else {
         throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "Unauthorized access");
     }
-    // check proper filer value
     if (status && !Object.values(parcel_interface_1.ParcelStatus).includes(status)) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Invalid parcel status");
     }
     if (status) {
         filter.currentStatus = status;
     }
-    const parcels = yield parcel_model_1.Parcel.find(filter);
+    // ✅ Populate sender and receiver info
+    const parcels = yield parcel_model_1.Parcel.find(filter)
+        .populate("sender", "name email") // show sender name & email
+        .populate("receiver", "name email"); // show receiver name & email
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 200,
         success: true,

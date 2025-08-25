@@ -19,6 +19,7 @@ router.post("/create", validateRequest(createParcelZodSchema), checkAuth(UserRol
 // sender  & receiver // check history
 router.get("/my-parcels", checkAuth(UserRole.SENDER, UserRole.RECEIVER), ParcelController.getMyParcels);
 
+
 // receiver
 router.get("/incoming", checkAuth(UserRole.RECEIVER), ParcelController.getIncomingParcels);
 

@@ -165,12 +165,14 @@ const cancelParcel = async (parcelId: string, senderId: string) => {
       httpStatus.NOT_FOUND,
       "Parcel not found or access denied"
     );
-  if (parcel.currentStatus !== "Requested") {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "Parcel cannot be canceled after dispatch"
-    );
-  }
+
+    
+if (parcel.currentStatus !== "Requested" && parcel.currentStatus !== "Approved") {
+  throw new AppError(
+    httpStatus.BAD_REQUEST,
+    "Parcel cannot be canceled after dispatch"
+  );
+}
 
   parcel.currentStatus = ParcelStatus.CANCELLED;
 
@@ -216,12 +218,17 @@ const confirmParcelDelivery = async (parcelId: string, receiverId: string) => {
   return parcel;
 };
 
+
 const getIncomingParcelsByReceiver = async (receiverId: string) => {
   return await Parcel.find({
     receiver: receiverId,
     currentStatus: { $nin: ["Cancelled", "Delivered"] }, // exclude these statuses
-  });
+  })
+    .populate("sender", "name email")   // only fetch name & email
+    .populate("receiver", "name email"); // same for receiver
 };
+
+
 
 const toggleParcelBlock = async (parcelId: string, block: boolean) => {
   const parcel = await Parcel.findById(parcelId);

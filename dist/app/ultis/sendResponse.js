@@ -4,7 +4,7 @@ exports.sendResponse = void 0;
 const sendResponse = (res, data) => {
     res.status(data.statusCode).json({
         statusCode: data.statusCode,
-        succeess: data.success,
+        success: data.success,
         message: data.message,
         meta: data.meta,
         data: data.data

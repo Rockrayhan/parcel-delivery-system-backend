@@ -13,27 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParcelService = void 0;
-// parcel.service.ts
 const parcel_model_1 = require("./parcel.model");
 const parcel_interface_1 = require("./parcel.interface");
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const user_model_1 = require("../user/user.model");
-// const createParcel = async (payload: IParcel): Promise<IParcel> => {
-//   // Auto-push first log into statusLogs
-//   const initialStatusLog = {
-//     status: payload.currentStatus || ParcelStatus.REQUESTED,
-//     timestamp: new Date(),
-//     updatedBy: "system", // Replace with user ID or role if available
-//     note: "Parcel created",
-//   };
-//   const newParcel = new Parcel({
-//     ...payload,
-//     currentStatus: payload.currentStatus || ParcelStatus.REQUESTED,
-//     statusLogs: [initialStatusLog],
-//   });
-//   return await newParcel.save();
-// };
 function generateTrackingId() {
     const date = new Date();
     const yyyy = date.getFullYear().toString();
@@ -42,6 +26,35 @@ function generateTrackingId() {
     const randomNum = Math.floor(100000 + Math.random() * 900000);
     return `TRK-${yyyy}${mm}${dd}-${randomNum}`;
 }
+// const createParcel = async (payload: Partial<IParcel>) => {
+//   const senderId = payload.sender;
+//   const sender = await User.findById(senderId);
+//   if (!sender) {
+//     throw new AppError(httpStatus.NOT_FOUND, "Sender not found.");
+//   }
+//   if (sender.isBlocked) {
+//     throw new AppError(
+//       httpStatus.FORBIDDEN,
+//       "Blocked users cannot create parcels."
+//     );
+//   }
+//   const trackingId = generateTrackingId();
+//   const parcelData = {
+//     ...payload,
+//     trackingId,
+//     currentStatus: "Requested", // initial status
+//     statusLogs: [
+//       {
+//         status: "Requested",
+//         timestamp: new Date(),
+//         updatedBy: "system",
+//         note: "Parcel created",
+//       },
+//     ],
+//   };
+//   const parcel = await Parcel.create(parcelData);
+//   return parcel;
+// };
 const createParcel = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const senderId = payload.sender;
     const sender = yield user_model_1.User.findById(senderId);
@@ -51,21 +64,28 @@ const createParcel = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     if (sender.isBlocked) {
         throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "Blocked users cannot create parcels.");
     }
+    // ✅ Resolve receiver by email
+    const receiver = yield user_model_1.User.findOne({ email: payload.receiverEmail });
+    if (!receiver) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Receiver not found with this email.");
+    }
     const trackingId = generateTrackingId();
-    const parcelData = Object.assign(Object.assign({}, payload), { trackingId, currentStatus: "Requested", statusLogs: [
+    const parcelData = Object.assign(Object.assign({}, payload), { receiver: receiver._id, // store ObjectId in DB
+        trackingId, currentStatus: parcel_interface_1.ParcelStatus.REQUESTED, statusLogs: [
             {
-                status: "Requested",
+                status: parcel_interface_1.ParcelStatus.REQUESTED,
                 timestamp: new Date(),
                 updatedBy: "system",
                 note: "Parcel created",
             },
         ] });
-    // Step 4: Create parcel in DB
-    const parcel = yield parcel_model_1.Parcel.create(parcelData);
-    return parcel;
+    delete parcelData.receiverEmail; // not in schema
+    return yield parcel_model_1.Parcel.create(parcelData);
 });
 const getAllParcels = () => __awaiter(void 0, void 0, void 0, function* () {
-    const parcels = yield parcel_model_1.Parcel.find();
+    const parcels = yield parcel_model_1.Parcel.find()
+        .populate("receiver", "name email") // ✅ fetch only name & email
+        .populate("sender", "name email"); // (optional) also show sender info
     const total = yield parcel_model_1.Parcel.countDocuments();
     return {
         meta: {
