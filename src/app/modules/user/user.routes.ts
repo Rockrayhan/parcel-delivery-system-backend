@@ -1,7 +1,7 @@
 import express from 'express';
 import { UserController } from './user.controller';
 import { validateRequest } from '../../middlewires/validateRequest';
-import { createUserZodSchema, updateUserZodSchema } from './user.validation';
+import { createUserZodSchema, toggleBlockUserZodSchema, updateUserZodSchema } from './user.validation';
 import { checkAuth } from '../../middlewires/checkAuth';
 import { UserRole } from './user.interface';
 
@@ -16,7 +16,10 @@ router.delete('/delete/:id', UserController.deleteUser);
 
 // routes/user.route.ts or wherever UserRoutes is defined
 
-router.patch('/block/:id',checkAuth(UserRole.ADMIN), validateRequest(updateUserZodSchema), UserController.toggleBlockUser );
+// router.patch('/block/:id',checkAuth(UserRole.ADMIN),  UserController.toggleBlockUser );
+router.patch('/block/:id', checkAuth(UserRole.ADMIN), UserController.blockUser);
+router.patch('/unblock/:id', checkAuth(UserRole.ADMIN), UserController.unblockUser);
+
 
 
 export const UserRoutes = router;

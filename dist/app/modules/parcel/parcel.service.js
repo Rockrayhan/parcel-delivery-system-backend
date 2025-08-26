@@ -123,7 +123,7 @@ const cancelParcel = (parcelId, senderId) => __awaiter(void 0, void 0, void 0, f
     const parcel = yield parcel_model_1.Parcel.findOne({ _id: parcelId, sender: senderId });
     if (!parcel)
         throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Parcel not found or access denied");
-    if (parcel.currentStatus !== "Requested") {
+    if (parcel.currentStatus !== "Requested" && parcel.currentStatus !== "Approved") {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Parcel cannot be canceled after dispatch");
     }
     parcel.currentStatus = parcel_interface_1.ParcelStatus.CANCELLED;
@@ -160,7 +160,9 @@ const getIncomingParcelsByReceiver = (receiverId) => __awaiter(void 0, void 0, v
     return yield parcel_model_1.Parcel.find({
         receiver: receiverId,
         currentStatus: { $nin: ["Cancelled", "Delivered"] }, // exclude these statuses
-    });
+    })
+        .populate("sender", "name email") // only fetch name & email
+        .populate("receiver", "name email"); // same for receiver
 });
 const toggleParcelBlock = (parcelId, block) => __awaiter(void 0, void 0, void 0, function* () {
     const parcel = yield parcel_model_1.Parcel.findById(parcelId);

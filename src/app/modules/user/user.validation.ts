@@ -28,3 +28,10 @@ export const updateUserZodSchema = z.object({
   role: z.enum(["admin", "sender", "receiver"]).optional(),
   isBlocked: z.boolean().optional(),
 });
+
+export const toggleBlockUserZodSchema = z.object({
+  isBlocked: z.boolean({
+    required_error: "isBlocked is required",
+    invalid_type_error: "isBlocked must be a boolean",
+  }),
+});
