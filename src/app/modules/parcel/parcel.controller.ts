@@ -146,15 +146,15 @@ const trackParcelHistory = catchAsync(async (req: Request, res: Response) => {
   }
 
   // Ensure the user is either sender or receiver of the parcel
-  if (
-    (role === UserRole.SENDER && parcel.sender.toString() !== userId) ||
-    (role === UserRole.RECEIVER && parcel.receiver.toString() !== userId)
-  ) {
-    throw new AppError(
-      httpStatus.FORBIDDEN,
-      "Unauthorized access to parcel history"
-    );
-  }
+  // if (
+  //   (role === UserRole.SENDER && parcel.sender.toString() !== userId) ||
+  //   (role === UserRole.RECEIVER && parcel.receiver.toString() !== userId)
+  // ) {
+  //   throw new AppError(
+  //     httpStatus.FORBIDDEN,
+  //     "Unauthorized access to parcel history"
+  //   );
+  // }
 
   sendResponse(res, {
     statusCode: 200,

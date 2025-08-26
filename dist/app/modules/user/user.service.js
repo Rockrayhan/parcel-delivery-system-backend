@@ -31,7 +31,7 @@ const getMe = (userId) => __awaiter(void 0, void 0, void 0, function* () {
         data: user
     };
 });
-const toggleBlockUser = (userId, isBlocked) => __awaiter(void 0, void 0, void 0, function* () {
+const setBlockStatus = (userId, isBlocked) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findByIdAndUpdate(userId, { isBlocked }, { new: true, runValidators: true });
     if (!user) {
         throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "User not found");
@@ -46,6 +46,6 @@ exports.UserService = {
     getAllUsers,
     getSingleUser,
     deleteUser,
-    toggleBlockUser,
-    getMe
+    setBlockStatus,
+    getMe,
 };

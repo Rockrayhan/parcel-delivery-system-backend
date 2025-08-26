@@ -25,7 +25,8 @@ router.get("/incoming", checkAuth(UserRole.RECEIVER), ParcelController.getIncomi
 
 
 // Sender & Receiver both can see parcel status history
-router.get("/track/:trackingId", checkAuth(UserRole.SENDER, UserRole.RECEIVER), ParcelController.trackParcelHistory);
+// router.get("/track/:trackingId", checkAuth(UserRole.SENDER, UserRole.RECEIVER), ParcelController.trackParcelHistory);
+router.get("/track/:trackingId",  ParcelController.trackParcelHistory);
 
 
 // sender

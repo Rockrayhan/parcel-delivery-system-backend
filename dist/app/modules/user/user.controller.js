@@ -22,7 +22,7 @@ const createUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, 
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 201,
         success: true,
-        message: 'User created successfully',
+        message: "User created successfully",
         data: result,
     });
 }));
@@ -31,7 +31,7 @@ const getAllUsers = (0, catchAsync_1.catchAsync)((_req, res) => __awaiter(void 0
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 200,
         success: true,
-        message: 'Users retrieved successfully',
+        message: "Users retrieved successfully",
         data: result,
     });
 }));
@@ -40,7 +40,7 @@ const getSingleUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 200,
         success: true,
-        message: 'User retrieved',
+        message: "User retrieved",
         data: result,
     });
 }));
@@ -51,17 +51,26 @@ const getMe = (0, catchAsync_1.catchAsync)((req, res, next) => __awaiter(void 0,
         success: true,
         statusCode: http_status_codes_1.default.CREATED,
         message: "Your profile Retrieved Successfully",
-        data: result.data
+        data: result.data,
     });
 }));
-const toggleBlockUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const blockUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { isBlocked } = req.body;
-    const result = yield user_service_1.UserService.toggleBlockUser(id, isBlocked);
+    const result = yield user_service_1.UserService.setBlockStatus(id, true); // block
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 200,
         success: true,
-        message: `User has been ${isBlocked ? 'blocked' : 'unblocked'} successfully`,
+        message: `User has been blocked successfully`,
+        data: result,
+    });
+}));
+const unblockUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield user_service_1.UserService.setBlockStatus(id, false); // unblock
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: 200,
+        success: true,
+        message: `User has been unblocked successfully`,
         data: result,
     });
 }));
@@ -70,7 +79,7 @@ const deleteUser = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, 
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: 200,
         success: true,
-        message: 'User deleted',
+        message: "User deleted",
         data: result,
     });
 }));
@@ -79,6 +88,7 @@ exports.UserController = {
     getAllUsers,
     getSingleUser,
     deleteUser,
-    toggleBlockUser,
-    getMe
+    getMe,
+    blockUser,
+    unblockUser,
 };

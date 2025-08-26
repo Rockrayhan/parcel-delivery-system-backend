@@ -16,7 +16,7 @@ router.delete('/delete/:id', UserController.deleteUser);
 
 // routes/user.route.ts or wherever UserRoutes is defined
 
-// router.patch('/block/:id',checkAuth(UserRole.ADMIN),  UserController.toggleBlockUser );
+
 router.patch('/block/:id', checkAuth(UserRole.ADMIN), UserController.blockUser);
 router.patch('/unblock/:id', checkAuth(UserRole.ADMIN), UserController.unblockUser);
 

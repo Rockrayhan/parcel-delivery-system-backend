@@ -27,17 +27,6 @@ const getMe = async (userId: string) => {
 };
 
 
-// const toggleBlockUser = async (userId: string, isBlocked: boolean) => {
-//   const user = await User.findByIdAndUpdate(
-//     userId,
-//     { isBlocked },
-//     { new: true, runValidators: true }
-//   );
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, "User not found");
-//   }
-//   return user;
-// };
 
 const setBlockStatus = async (userId: string, isBlocked: boolean) => {
   const user = await User.findByIdAndUpdate(
@@ -63,7 +52,6 @@ export const UserService = {
   getAllUsers,
   getSingleUser,
   deleteUser,
-  // toggleBlockUser,
   setBlockStatus,
   getMe,
 };

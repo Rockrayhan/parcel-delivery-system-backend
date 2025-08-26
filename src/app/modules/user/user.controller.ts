@@ -48,19 +48,6 @@ const getMe = catchAsync(
   }
 );
 
-// const toggleBlockUser = catchAsync(async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const { isBlocked } = req.body;
-
-//   const result = await UserService.toggleBlockUser(id, isBlocked);
-
-//   sendResponse(res, {
-//     statusCode: 200,
-//     success: true,
-//     message: `User has been ${isBlocked ? 'blocked' : 'unblocked'} successfully`,
-//     data: result,
-//   });
-// });
 
 const blockUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -73,6 +60,7 @@ const blockUser = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 
 const unblockUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -102,7 +90,6 @@ export const UserController = {
   getAllUsers,
   getSingleUser,
   deleteUser,
-  // toggleBlockUser,
   getMe,
   blockUser,
   unblockUser,
