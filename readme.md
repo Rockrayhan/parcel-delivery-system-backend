@@ -10,7 +10,7 @@ A simple backend API for Parcel Management System — built with **Node.js**, **
 
 - JWT-based login system with three roles: admin, sender, receiver
 
-- 🚚 Senders can:
+- Senders can:
 
 * Create parcel delivery requests
 * Cancel parcel (if not dispatched)

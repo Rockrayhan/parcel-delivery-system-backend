@@ -121,32 +121,55 @@ const getSingleParcel = async (id: string): Promise<IParcel | null> => {
 
 
 
-const updateParcel = async (
-  id: string,
-  payload: Partial<IParcel>
-): Promise<IParcel | null> => {
-  const parcel = await Parcel.findById(id);
-  if (!parcel) throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+// const updateParcel = async (
+//   id: string,
+//   payload: Partial<IParcel>
+// ): Promise<IParcel | null> => {
+//   const parcel = await Parcel.findById(id);
+//   if (!parcel) throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
 
-  // Handle status change and log it
-  if (payload.currentStatus && payload.currentStatus !== parcel.currentStatus) {
-    parcel.statusLogs.push({
-      status: payload.currentStatus,
-      timestamp: new Date(),
-      updatedBy: "admin", // or dynamically from req.user.role
-      note: (payload as any).note || `Status updated to ${payload.currentStatus}`,
-
-    });
-
-    parcel.currentStatus = payload.currentStatus;
-  }
-
-  // Update other fields directly
-  Object.assign(parcel, payload);
   
+//   // Handle status change and log it
+//   if (payload.currentStatus && payload.currentStatus !== parcel.currentStatus) {
+//     parcel.statusLogs.push({
+//       status: payload.currentStatus,
+//       timestamp: new Date(),
+//       updatedBy: "admin", // or dynamically from req.user.role
+//       note: (payload as any).note || `Status updated to ${payload.currentStatus}`,
+
+//     });
+
+//     parcel.currentStatus = payload.currentStatus;
+//   }
+
+//   // Update other fields directly
+//   Object.assign(parcel, payload);
+  
+//   await parcel.save();
+//   return parcel;
+// };
+
+
+
+
+const updateParcelStatus = async (id: string, status: ParcelStatus) => {
+  const parcel = await Parcel.findById(id);
+  if (!parcel) throw new Error("Parcel not found");
+
+  parcel.statusLogs.push({
+    status,
+    timestamp: new Date(),
+    updatedBy: "admin",
+    note: `Status updated to ${status}`,
+  });
+
+  parcel.currentStatus = status;
+
   await parcel.save();
   return parcel;
 };
+
+
 
 
 
@@ -258,10 +281,13 @@ export const ParcelService = {
   getAllParcels,
   getSingleParcel,
   deleteParcel,
-  updateParcel,
+  // updateParcel,
   getParcelsBySenderId,
   cancelParcel,
   getIncomingParcelsByReceiver,
   confirmParcelDelivery,
   toggleParcelBlock,
+  updateParcelStatus
+  
+  
 };

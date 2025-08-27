@@ -44,7 +44,12 @@ router.patch("/unblock/:id", checkAuth(UserRole.ADMIN),  ParcelController.unbloc
 
 
 // router.get("/:id", ParcelController.getSingleParcel);
-router.patch("/update/:id", checkAuth(UserRole.ADMIN), validateRequest(updateParcelZodSchema), ParcelController.updateParcel);
+// router.patch("/update/:id", checkAuth(UserRole.ADMIN), validateRequest(updateParcelZodSchema), ParcelController.updateParcel);
+
+
+router.patch("/status/:id", ParcelController.updateParcelStatus);
+
+
 router.delete("/delete/:id",  checkAuth(UserRole.ADMIN),  ParcelController.deleteParcel);
 
 export const ParcelRoutes = router;

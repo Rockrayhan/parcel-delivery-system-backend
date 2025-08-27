@@ -44,16 +44,54 @@ const getSingleParcel = catchAsync(async (req: Request, res: Response) => {
 
 
 
-const updateParcel = catchAsync(async (req: Request, res: Response) => {
-  const result = await ParcelService.updateParcel(req.params.id, req.body);
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Parcel updated successfully",
-    data: result,
-  });
-});
+// const updateParcel = catchAsync(async (req: Request, res: Response) => {
+//   const result = await ParcelService.updateParcel(req.params.id, req.body);
+//   console.log("REQ BODY:", req.body);
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: "Parcel updated successfully",
+//     data: result,
+//   });
+// });
 
+
+
+const updateParcelStatus = async (req: Request, res: Response) => {
+  try {
+    const parcelId = req.params.id;
+    
+    console.log(req.body);
+    
+    // Alternative way to access the body
+    const currentStatus = req.body.currentStatus;
+    
+    // Or even more defensive:
+    // const currentStatus = req.body?.currentStatus;
+
+    if (!currentStatus) {
+      return res.status(400).json({ 
+        success: false,
+        message: "currentStatus is required in the request body" 
+      });
+    }
+
+    const updatedParcel = await ParcelService.updateParcelStatus(parcelId, currentStatus);
+
+    res.status(200).json({
+      success: true,
+      message: "Parcel status updated successfully",
+      data: updatedParcel,
+    });
+  } catch (err: any) {
+    console.error("Update Parcel Status Error:", err);
+    res.status(500).json({ 
+      success: false,
+      message: "Failed to update parcel status",
+      error: err.message 
+    });
+  }
+};
 
 
 
@@ -246,7 +284,7 @@ export const ParcelController = {
   createParcel,
   getAllParcels,
   getSingleParcel,
-  updateParcel,
+  // updateParcel,
   deleteParcel,
   getMyParcels,
   cancelParcel,
@@ -255,4 +293,5 @@ export const ParcelController = {
   blockParcel,
   unblockParcel,
   trackParcelHistory,
+  updateParcelStatus,
 };
