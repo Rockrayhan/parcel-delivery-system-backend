@@ -32,8 +32,8 @@ const checkAuth = (...authRoles) => (req, res, next) => __awaiter(void 0, void 0
         if (!isUserExist) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User does not exist");
         }
-        if (isUserExist.isBlocked === true) {
-            throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, `User is blocked`);
+        if (isUserExist.isBlocked) {
+            throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "Your account is blocked. Please contact support.");
         }
         if (!authRoles.includes(verifiedToken.role)) {
             throw new AppError_1.default(403, "You are not permitted to view this route!!!");

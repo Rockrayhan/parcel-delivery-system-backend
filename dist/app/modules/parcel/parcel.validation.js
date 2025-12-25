@@ -36,7 +36,14 @@ exports.updateParcelZodSchema = zod_1.z.object({
     deliveryAddress: zod_1.z.string().optional(),
     fee: zod_1.z.number().min(0).optional(),
     deliveryDate: zod_1.z.coerce.date().optional(),
-    currentStatus: zod_1.z.nativeEnum(parcel_interface_1.ParcelStatus).optional(),
+    // currentStatus: z.nativeEnum(ParcelStatus).optional(),
+    currentStatus: zod_1.z
+        .string()
+        .transform((val) => val.trim())
+        .refine((val) => Object.values(parcel_interface_1.ParcelStatus).includes(val), {
+        message: "Invalid parcel status",
+    })
+        .optional(),
     note: zod_1.z.string().optional(), // for custom status update notes
     statusLogs: zod_1.z
         .array(zod_1.z.object({

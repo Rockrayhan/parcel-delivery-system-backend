@@ -39,6 +39,9 @@ const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function
     if (!isPasswordMatched) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "Incorrect Password");
     }
+    if (isUserExist.isBlocked) {
+        throw new AppError_1.default(http_status_codes_1.default.FORBIDDEN, "Your account is blocked. Please contact support.");
+    }
     // const jwtPayload = {
     //     userId: isUserExist._id,
     //     email: isUserExist.email,
@@ -53,7 +56,7 @@ const credentialsLogin = (payload) => __awaiter(void 0, void 0, void 0, function
     return {
         accessToken: userTokens.accessToken,
         refreshToken: userTokens.refreshToken,
-        user: rest
+        user: rest,
     };
 });
 exports.AuthServices = {

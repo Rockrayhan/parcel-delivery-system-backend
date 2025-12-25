@@ -10,8 +10,10 @@ const globalErrorHandler_1 = require("./app/middlewires/globalErrorHandler");
 const routes_1 = require("./app/routes");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
+// app.use(express.json());
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
+app.use(express_1.default.urlencoded({ extended: true }));
 // app.use(cors());
 // app.use(
 //   cors({

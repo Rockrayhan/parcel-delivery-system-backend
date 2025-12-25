@@ -49,15 +49,46 @@ const getSingleParcel = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(voi
         data: result,
     });
 }));
-const updateParcel = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield parcel_service_1.ParcelService.updateParcel(req.params.id, req.body);
-    (0, sendResponse_1.sendResponse)(res, {
-        statusCode: 200,
-        success: true,
-        message: "Parcel updated successfully",
-        data: result,
-    });
-}));
+// const updateParcel = catchAsync(async (req: Request, res: Response) => {
+//   const result = await ParcelService.updateParcel(req.params.id, req.body);
+//   console.log("REQ BODY:", req.body);
+//   sendResponse(res, {
+//     statusCode: 200,
+//     success: true,
+//     message: "Parcel updated successfully",
+//     data: result,
+//   });
+// });
+const updateParcelStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const parcelId = req.params.id;
+        console.log(req.body);
+        // Alternative way to access the body
+        const currentStatus = req.body.currentStatus;
+        // Or even more defensive:
+        // const currentStatus = req.body?.currentStatus;
+        if (!currentStatus) {
+            return res.status(400).json({
+                success: false,
+                message: "currentStatus is required in the request body"
+            });
+        }
+        const updatedParcel = yield parcel_service_1.ParcelService.updateParcelStatus(parcelId, currentStatus);
+        res.status(200).json({
+            success: true,
+            message: "Parcel status updated successfully",
+            data: updatedParcel,
+        });
+    }
+    catch (err) {
+        console.error("Update Parcel Status Error:", err);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update parcel status",
+            error: err.message
+        });
+    }
+});
 // const getMyParcels = async (req: Request, res: Response) => {
 //   const userId = req.user?.userId;
 //   const role = req.user?.role;
@@ -211,7 +242,7 @@ exports.ParcelController = {
     createParcel,
     getAllParcels,
     getSingleParcel,
-    updateParcel,
+    // updateParcel,
     deleteParcel,
     getMyParcels,
     cancelParcel,
@@ -220,4 +251,5 @@ exports.ParcelController = {
     blockParcel,
     unblockParcel,
     trackParcelHistory,
+    updateParcelStatus,
 };
